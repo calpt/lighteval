@@ -45,7 +45,7 @@ class GenerationParameters(BaseModel, extra="forbid"):
     top_k: NonNegativeInt | None = None  # vllm, transformers, tgi, sglang
     min_p: NonNegativeFloat | None = None  # vllm, transformers, sglang
     top_p: NonNegativeFloat | None = None  # vllm, transformers, tgi, litellm, sglang
-    truncate_prompt: bool | None = None  # vllm, tgi
+    truncate_prompt: int | None = None  # vllm, tgi
 
     cache_implementation: str | None = None  # transformers
 
@@ -153,6 +153,7 @@ class GenerationParameters(BaseModel, extra="forbid"):
             "max_new_tokens": "max_tokens",
             "min_new_tokens": "min_tokens",
             "stop_tokens": "stop",
+            "truncate_prompt": "truncate_prompt_tokens",
         }
 
         # Task specific sampling params to set in model: n, best_of, use_beam_search
