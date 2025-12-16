@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import functools
 import logging
 import random
 from dataclasses import asdict, dataclass, field
@@ -153,7 +154,7 @@ class LightevalTaskConfig:
         self.stop_sequence = self.stop_sequence if self.stop_sequence is not None else ()
         self.full_name = f"{self.name}|{self.num_fewshots}"  # todo clefourrier: this is likely incorrect
 
-    def __str__(self, lite: bool = False):
+    def __str__(self, lite: bool = False):  # noqa: C901
         md_writer = MarkdownTableWriter()
         md_writer.headers = ["Key", "Value"]
 
@@ -168,8 +169,11 @@ class LightevalTaskConfig:
             if k == "metrics":
                 for ix, metrics in enumerate(v):
                     for metric_k, metric_v in metrics.items():
-                        if isinstance(metric_v, Callable):
-                            repr_v = metric_v.__name__
+                        if isinstance(metric_v, functools.partial):
+                            func_name = getattr(metric_v.func, "__name__", str(metric_v.func))
+                            repr_v = f"partial({func_name}, ...)"
+                        elif isinstance(metric_v, Callable):
+                            repr_v = getattr(metric_v, "__name__", repr(metric_v))
                         elif isinstance(metric_v, Metric.get_allowed_types_for_metrics()):
                             repr_v = str(metric_v)
                         else:
@@ -177,8 +181,11 @@ class LightevalTaskConfig:
                         values.append([f"{k} {ix}: {metric_k}", repr_v])
 
             else:
-                if isinstance(v, Callable):
-                    values.append([k, v.__name__])
+                if isinstance(v, functools.partial):
+                    func_name = getattr(v.func, "__name__", str(v.func))
+                    values.append([k, f"partial({func_name}, ...)"])
+                elif isinstance(v, Callable):
+                    values.append([k, getattr(v, "__name__", repr(v))])
                 else:
                     values.append([k, repr(v)])
 
