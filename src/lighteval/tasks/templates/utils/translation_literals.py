@@ -715,8 +715,10 @@ TRANSLATION_LITERALS: dict[Language, TranslationLiterals] = {
     Language.KOREAN: TranslationLiterals(
         language=Language.KOREAN,
         confirmation_word="맞죠",
+        question_word="질문",
         yes="예",
         no="아니오",
+        answer="답변",
     ),
     Language.KURDISH: TranslationLiterals(language=Language.KURDISH),
     Language.KYRGYZ: TranslationLiterals(language=Language.KYRGYZ),
